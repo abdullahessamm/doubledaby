@@ -1,0 +1,173 @@
+*:focus
+{
+    outline: none;
+    border: 1px solid #3ab3f1 !important;
+    box-shadow: 0px 1px 10px #3ab3f1;
+}
+.contact-cover
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.contact-cover >img
+{
+    width: 100%;
+    height: 100%;
+}
+
+.contact-container
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+}
+
+.contact-container > form
+{
+    width: 60%;
+    height: 60%;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.contact-container > form > .row
+{
+    position: relative;
+    height: 100%;
+}
+
+.contact-container > form .left-grid
+{
+    position: relative;
+    height: 100%;
+}
+.contact-container > form .left-grid img
+{
+    position: absolute;
+    top:0;
+    left:0;
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+.contact-container > form .left-grid-container
+{
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    padding-left: 10px;
+    padding-top: 70px;
+    padding-bottom: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+}
+.contact-container > form .left-grid-container > h2
+{
+    color: #3ab3f1;
+    text-shadow: 2px -1px 4px #ff0011;
+    font-size: 40px;
+}
+
+.contact-container > form .left-grid-container .social div
+{
+    margin-bottom: 10px;
+}
+.contact-container > form .left-grid-container a
+{
+    color: #fff;
+    font-size: 20px;
+}
+
+.contact-container > form .left-grid-container i
+{
+    font-size: 21px;
+    margin-right: 3px;
+}
+
+.contact-container > form .left-grid-container .facebook i
+{
+    color: #3C5A99;
+}
+.contact-container > form .left-grid-container .instagram i
+{
+    color: #E1306C;
+}
+.contact-container > form .left-grid-container .twitter i
+{
+    color: #1DA1F2;
+}
+.contact-container > form .left-grid-container .whatsapp i
+{
+    color: #0f0;
+}
+
+.contact-container > form .right-grid
+{
+    padding-left: 30px;
+    padding-right: 50px;
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.contact-container > form .right-grid > .right-grid-container > div
+{
+    margin-top: 10px;
+}
+.contact-container > form .right-grid > .right-grid-container > div.email input,
+.contact-container > form .right-grid > .right-grid-container > div.title input,
+.contact-container > form .right-grid > .right-grid-container > div.subject textarea,
+.contact-container > form .right-grid > .right-grid-container > div.client-name input,
+.contact-container > form .right-grid > .right-grid-container > div.submit input
+{
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid #aaa;
+    transition: box-shadow 0.5s ease;
+}
+
+.contact-container > form .right-grid > .right-grid-container > div.client-name .col-md-6
+{
+    padding-right: 3.75px;
+}
+.contact-container > form .right-grid > .right-grid-container > div.client-name .col-md-6.last
+{
+    padding-right: 15px;
+    padding-left: 3.75px;
+}
+
+.contact-container > form .right-grid > .right-grid-container > div.subject textarea
+{
+    height: 130px;
+    resize: none;
+}
+
+.error
+{
+    color: #f00;
+}
+
+.input-error
+{
+    border-color: #f00 !important;
+    box-shadow: 0px 1px 10px #ff0011;
+}

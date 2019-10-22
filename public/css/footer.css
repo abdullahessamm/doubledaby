@@ -1,0 +1,71 @@
+.footer
+{
+    background-color: #333;
+    color: #eee;
+    z-index: 999;
+    position: relative;
+    padding-top: 20px;
+    box-shadow: 0 -3px 20px #000;
+}
+
+.footer .upper-left h2
+{
+    font-size: 1.75rem;
+    color: #3ab3f1;
+    font-family: 'Anton', sans-serif;
+}
+.footer .upper-left h2 > span
+{
+    color: #ff0011;
+    margin-left: 5px;
+}
+.footer .upper-left p
+{
+    margin-left: 5px;
+    color: #aaa;
+}
+.footer .upper-center > ul
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.footer .upper-center > ul > li { margin-top: 3px; padding: 0 }
+.footer .upper-center > ul > li > a { color: #aaa; }
+
+.footer .upper-right div
+{
+    max-width: 170px;
+    margin-right: 0;
+    margin-left: auto;
+    text-align: left;
+    margin-bottom: 10px;
+}
+.footer .upper-right div a
+{
+    color: #aaa;
+}
+.footer .upper-right div a > i
+{
+    font-size: 23px;
+    margin-right: 10px;
+}
+.footer .upper-right div a > i.fa-facebook-f { color: #3C5A99 }
+
+.footer .upper-right div a > i.fa-instagram { color: #E1306C }
+
+.footer .upper-right div a > i.fa-twitter { color: #1DA1F2 }
+
+.footer .lower
+{
+    background-color: #222;
+}
+.footer .lower span
+{
+    color: #ccc;
+    margin-right: 5px;
+}
+.footer .lower a
+{
+    color: #fff
+}
