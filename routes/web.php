@@ -137,3 +137,5 @@ Route::get('lang/{lang?}', function ($lang) {
 
 //Testing Route
 Route::get('test', 'ContactController@test');
+
+Route::view('dashboard', 'vue.dashboard');
