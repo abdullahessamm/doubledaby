@@ -89,7 +89,10 @@
                                     {{ auth()->user()->full_name }}
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{url('lang/en')}}"> Dashboard </a>
+                                    @if(auth()->user()->level === 'admin')
+                                        <a class="dropdown-item" href="{{url('dashboard')}}"> Dashboard </a>
+                                    @endif
+                                    
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{url('/logout')}}" style="color:#f00"> Logout </a>
                                 </div>

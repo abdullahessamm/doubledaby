@@ -88,7 +88,8 @@ class UserController extends Controller
                 'username'      => $request->username,
                 'email'         => $request->email,
                 'password'      => bcrypt( $request->password ),
-                'gender'        => $request->gender
+                'gender'        => $request->gender,
+                'level'         => 'user'
             ]);
             auth()->loginUsingId($user->id);
             return json_encode([

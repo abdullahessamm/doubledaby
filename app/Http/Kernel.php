@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
         //Created middleware
         'desktop'       => \App\Http\Middleware\redirectToDevicePage::class,
         'user'          => \App\Http\Middleware\RedirectIfNotAuthenticated::class,
+        'admin'         => \App\Http\Middleware\RedirectIfNotAdmin::class,
     ];
 
     /**

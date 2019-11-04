@@ -135,7 +135,21 @@ Route::get('lang/{lang?}', function ($lang) {
     return back();
 });
 
-//Testing Route
-Route::get('test', 'ContactController@test');
+//products routes
+Route::get('get-products', 'DashboardController@get_products');
 
-Route::view('dashboard', 'vue.dashboard');
+Route::get('get-product-by-id/{id?}', 'DashboardController@get_product_by_id');
+
+Route::post('addproduct', 'DashboardController@add_product')->middleware('admin');
+
+Route::post('edit-product', 'DashboardController@edit_product')->middleware('admin');
+
+Route::post('delete-product', 'DashboardController@delete_product')->middleware('admin');
+
+//Dashboard view
+Route::view('dashboard/{param?}', 'vue.dashboard')->middleware('admin');
+
+
+
+//Testing Route
+Route::get('test', 'DashboardController@get_products');
