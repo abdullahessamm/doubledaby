@@ -3,7 +3,7 @@
         <Routes :username="user.full_name" :userID="user.id"></Routes>
         <div class="dashboard-settings">
             <Navbar :username="user.full_name" :userID="user.id"></Navbar>
-            <router-view :token="token" :url="url"></router-view>
+            <router-view :token="token" :url="url" :no_connection="no_connection"></router-view>
         </div>
     </div>
 </template>
@@ -41,11 +41,24 @@
             return {
                 counter: 0,
                 user: {},
+                no_connection: false,
             };
         },
 
         mounted() {
             this.user = JSON.parse( this.user_json );
+            let check_connection;
+            let check_the_connection = () => {
+                check_connection = setInterval(() => {
+                    axios.post(this.url + '/check-connection')
+                    .then(response => this.no_connection = false)
+                    .catch(err => {
+                        this.no_connection = true;
+                        $('input').attr('disabled', 'disabled');
+                    });
+                }, 5000);
+            }
+            check_the_connection();
         },
 
         components: {

@@ -63,7 +63,7 @@
                     </div>
                 </fieldset>
             </section>
-            <h3 class="search-not-found text-center" style="margin-top: 100px; color: #666;" v-if="filtered_products.length === 0">
+            <h3 class="search-not-found text-center" style="margin-top: 100px; color: #666;" v-if="filtered_products.length === 0 && products.length !== 0">
                 ({{search}}) not found!
             </h3>
             <section class="old-products" v-if="filtered_products.length !== 0">

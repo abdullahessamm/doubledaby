@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href=" {{ asset('css/app.css') }} ">
     <link rel="stylesheet" href=" {{ asset('css/all.min.css') }} ">
+    <link href="https://fonts.googleapis.com/css?family=Yeon+Sung&display=swap" rel="stylesheet">
     <script src=" {{ asset('js/app.js') }} " defer></script>
     <title>dashboard</title>
 </head>

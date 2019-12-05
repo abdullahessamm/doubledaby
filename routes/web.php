@@ -135,16 +135,25 @@ Route::get('lang/{lang?}', function ($lang) {
     return back();
 });
 
-//products routes
-Route::get('get-products', 'DashboardController@get_products');
+//check connection
+Route::post('check-connection', function () {
+    return request();
+});
 
+//products routes
 Route::get('get-product-by-id/{id?}', 'DashboardController@get_product_by_id');
+
+Route::get('get-products', 'DashboardController@get_products')->middleware('admin');
 
 Route::post('addproduct', 'DashboardController@add_product')->middleware('admin');
 
 Route::post('edit-product', 'DashboardController@edit_product')->middleware('admin');
 
 Route::post('delete-product', 'DashboardController@delete_product')->middleware('admin');
+
+//bills routes
+Route::get('bills/get-all', 'BillsController@get_all_bills')->middleware('admin');
+Route::post('bills/watch-changes', 'BillsController@watch_changes')->middleware('admin');
 
 //Dashboard view
 Route::view('dashboard/{param?}', 'vue.dashboard')->middleware('admin');
