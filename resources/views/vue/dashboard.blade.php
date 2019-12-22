@@ -8,7 +8,7 @@
     <link rel="stylesheet" href=" {{ asset('css/all.min.css') }} ">
     <link href="https://fonts.googleapis.com/css?family=Yeon+Sung&display=swap" rel="stylesheet">
     <script src=" {{ asset('js/app.js') }} " defer></script>
-    <title>dashboard</title>
+    <title>Dashboard</title>
 </head>
 <body>
     <div id="app">

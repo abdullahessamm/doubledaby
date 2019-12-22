@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import DashboardInterface from './components/dashboard/interface.vue';
 import Store from './components/dashboard/store.vue';
 import Sales from './components/dashboard/sales.vue';
+import Admins from './components/dashboard/admins.vue';
 
 Vue.use(VueRouter);
 
@@ -23,6 +24,11 @@ var routes = [
         name: 'Sales',
         path: '/dashboard/sales',
         component: Sales
+    },
+    {
+        name: 'Admins',
+        path: '/dashboard/admins',
+        component: Admins,
     }
 ];
 

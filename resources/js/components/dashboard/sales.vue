@@ -1,234 +1,47 @@
 <template>
-    <div class="sells">
-        <div class="statistics">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-md-12">
-                        <canvas id="month-sales"></canvas>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="today earning-card text-center">
-                                    <div class="mony-title">
-                                        Today:
-                                    </div>
-                                    <div class="mony">
-                                        <i class="fas fa-dollar-sign"></i> {{today_mony === 0 ? '0.00' : today_mony}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="total earning-card text-center">
-                                    <div class="mony-title">
-                                        Yesterday:
-                                    </div>
-                                    <div class="mony">
-                                        <i class="fas fa-dollar-sign"></i> {{yesterday_mony === 0 ? '0.00': yesterday_mony}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="canvas-container">
-                                    <canvas id="myChart" width="400" height="400" aria-label="Your browser dosen't support canvas" role="img"></canvas>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="canvas-container">
-                                    <canvas id="secondChart" width="400" height="400" aria-label="Your browser dosen't support canvas" role="img"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div id="sales">
+        <SalesInterface 
+            :url="url" 
+            :no_connection="no_connection"
+            :today_mony="today_mony"
+            :yesterday_mony="yesterday_mony"
+            :the_day_before="the_day_before"
+            :months_earnings="months_earnings"
+            :this_year="this_year"
+            :last_year="last_year"
+            :the_year_before="the_year_before"
+            :bills="bills"
+            :special_members="special_members"
+            :special_clients="special_clients"
+            v-if="all_items_loaded"
+        >
+        </SalesInterface>
+        <div class="loading-animation-container" v-if="!all_items_loaded">
+            <div class="sk-chase">
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
             </div>
         </div>
-        <div class="bills">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 col-lg-8">
-                        <div class="trend-product-container">
-
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4" v-show="is_loading || bill_loading_error">
-                        <div class="loading-container">
-                            <div class="sk-chase" v-if="is_loading">
-                                <div class="sk-chase-dot"></div>
-                                <div class="sk-chase-dot"></div>
-                                <div class="sk-chase-dot"></div>
-                                <div class="sk-chase-dot"></div>
-                                <div class="sk-chase-dot"></div>
-                                <div class="sk-chase-dot"></div>
-                            </div>
-                            <div v-if="bill_loading_error"> Can't connect to the server </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4" v-show="!is_loading && !bill_loading_error">
-                        <div class="bills-container">
-                            <h2 class="text-center"> Bills </h2>
-                            <div class="no-bill-msg" v-if="bills.length === 0">
-                                <p class="text-center" style="font-size:16px;color: #777; margin-top: 50px;"> There are no bills right now. </p>
-                            </div>
-                            <div class="container">
-                                <div class="row" v-for="bill in bills" :key="bill.id">
-                                    <div class="col-12" v-if="bills.findIndex(ele => ele.id === bill.id) < 4" >
-                                        <div class="bill-container">
-                                            <span class="name"> {{bill.customer_name}} </span> <span> {{new Date(bill.date*1000).getDate()}}/{{new Date(bill.date*1000).getMonth() + 1}}/{{new Date(bill.date*1000).getFullYear()}} </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="btn btn-danger" style="cursor: pointer" @click="openAllBills=true" v-if="bills.length !== 0">See all</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <transition name="open-all-bills">
-            <div class="all-bills" v-if="openAllBills" @click.self="close_bills">
-                <Bills :start_bills_out_animation="start_bills_out_animation" :bills="bills" :delete_empty="delete_empty" :compute_edited_bill="compute_edited_bill" :delete_bill_color="delete_bill_color" :add_size="add_size"></Bills>
-            </div>
-        </transition>
-
-        <transition name="slide-up-from-bottom">
-            <div class="connection" v-if="show_connection_status">
-                <div class="text-center connection-status connected" v-if="!no_connection"> Connected ! </div>
-                <div class="text-center connection-status offline" v-if="no_connection"> Connection lost ! </div>
-            </div>
-        </transition>
-
     </div>
 </template>
 
 <style lang="scss" scoped>
-
-
-    .sells
+    #sales
     {
-        background-color: #eee;
+        width: 100%;
         height: calc(100% - 64px);
-        overflow-Y: auto;
-        overflow-X: hidden;
-        position: relative;
-        padding-bottom: 20px;
-        
-        .earning-card
+        .loading-animation-container
         {
-            background-color: #2a4054;
-            margin-top: 35px;
-            height: 120px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            color: #ccc;
-            border-radius: 10px;
-
-            .mony-title
-            {
-                position: absolute;
-                top: 0;
-                left: 5px;
-                font-size: 16px;
-                color: #fff;
-            }
-        }
-        
-        .canvas-container
-        {
-            background-color: transparent;
-            margin-top: 25px;
-        }
-
-        .bills
-        {
-            margin-top: 20px;
-
-            .bills-container, .trend-product-container
-            {
-                background-color: #fff;
-                margin-top: 15px;
-                box-shadow: 0 1px 6px #000;
-                border-radius: 5px;
-                padding: 5px 0;
-                overflow: hidden;
-                overflow-y: auto;
-
-                h2
-                {
-                    color: #888;
-                    margin-bottom: 20px;
-                    letter-spacing: 5px;
-                    font-family: 'Yeon Sung', cursive;
-                }
-
-                .bill-container
-                {
-                    margin-bottom: 10px;
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 5px;
-
-                    span.name
-                    {
-                        color: #fff;
-                        background-color: #3490dc;
-                        min-width: 80px;
-                        text-align: center;
-                    }
-                }
-            }
-            .loading-container
-            {
-                width: 100%;
-                height: calc(100% - 17px);
-                margin-top: 17px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: #fff;
-                border-radius: 5px;
-                box-shadow: 0 1px 6px #000;
-            }
-        }
-
-        .all-bills
-        {
-            position: fixed;
-            top: 0;
-            left: 0;
+            display:flex;
             width: 100%;
             height: 100%;
-            background-color: rgba(10,10,10, 0.6);
-            display: flex;
             justify-content: center;
             align-items: center;
         }
-
-        .connection
-        {
-            position: fixed;
-            bottom: 0;
-            width: calc(100% - 250px);
-            color: #eee;
-            letter-spacing: 1px;
-            font-weight: bold;
-
-            .connected {background-color: #0f0}
-            .offline {background-color: #555}
-        }
-
-        //Animations
-        .open-all-bills-enter-active, .open-all-bills-leave-active {transition: ease background-color .5s}
-        .open-all-bills-enter, .open-all-bills-leave-to {background-color: rgba(10,10,10, 0)}
-        .open-all-bills-enter-to, .open-all-bills-leave {background-color: rgba(10,10,10, 0.6)}
 
         //Loading animation
         /* Loading */
@@ -286,36 +99,41 @@
                 transform: scale(1.0); 
             } 
         }
-        
-        /* connection details animation */
-        .slide-up-from-bottom-enter-active, .slide-up-from-bottom-leave-active
-        {
-            transition: 0.5s transform ease-in-out;
-        }
-        .slide-up-from-bottom-enter, .slide-up-from-bottom-leave-to
-        {
-            transform: translateY(23px);
-        }
-        .slide-up-from-bottom-enter-to, .slide-up-from-bottom-leave
-        {
-            transform: translateY(0);
-        }
     }
-
 </style>
 
 <script>
-import Bills from './sales/bills.vue';
+import SalesInterface from './sales/interface';
 export default {
     name: 'Sales',
     props: ['url', 'no_connection'],
     data: function () {
         return {
+            //loaded items from server
+            loaded_items: [],
+            all_items_loaded: false,
+
             show_connection_status: false,
             //days earnings
-            today_mony: 2000.00,
-            yesterday_mony: 1000.00,
-            the_day_before: 3500.00,
+            today_mony: 0,
+            yesterday_mony: 0,
+            the_day_before: 0,
+
+            //monthly earnings
+            months_earnings: {
+                jan: 0,
+                feb: 0,
+                mar: 0,
+                apr: 0,
+                may: 0,
+                jun: 0,
+                jul: 0,
+                aug: 0,
+                sep: 0,
+                oct: 0,
+                nov: 0,
+                dec: 0,
+            },
             
             //years earnings
             this_year: 20000,
@@ -328,313 +146,189 @@ export default {
             is_loading: true,
             bill_loading_error: false,
             bills: [],
-            deleted_items: {
-                bills_IDs: [],
-                orders_IDs: [],
-                colors_IDs: [],
-                sizes_IDs: []
-            },
             // end of bills
+
+            special_members: [],
+
+            special_clients: [
+                {
+                    id: Math.floor(Math.random() * 999999),
+                    name: 'Mohammad',
+                    total_payments: 2000,
+                }
+            ],
 
         }; //end of data function
     }, // end of data
 
-    methods: {
-        close_bills: function () {
-            this.start_bills_out_animation = true;
-            setTimeout(() => {
-                this.openAllBills = false;
-                this.start_bills_out_animation = false;
-                }
-            , 500);
-        }, //end of close bills
-
-        compute_edited_bill: function (bill_id, order_id, color_id, size_id) {
-            
-            let index_of_bill  = this.bills.findIndex(bill => bill.id === bill_id),
-                selected_bill  = this.bills[index_of_bill],
-                index_of_order = selected_bill.orders.findIndex(order => order.id === order_id),
-                selected_order = selected_bill.orders[index_of_order],
-                index_of_color = selected_order.colors.findIndex(color => color.id === color_id),
-                selected_color = selected_order.colors[index_of_color],
-                index_of_size  = selected_color.sizes.findIndex(size => size.id === size_id),
-                selected_size  = selected_color.sizes[index_of_size];
-                selected_size.count ? '' : selected_size.count = 0; // set min val = 0
-                selected_size.count.length > 1 && selected_size.count[0] == 0 ? selected_size.count = selected_size.count.slice(1) : ''; // clear 0 on input
-            
-            selected_order.colors.forEach(color => {
-                // calculate total count of colors.
-                let total_count = 0;
-                color.sizes.forEach(size => total_count += parseInt(size.count));
-                color.count = total_count;
-            });
-            
-
-        }, //end of compute edited bill
-
-        delete_empty: function (bill_id, order_id, color_id, size_id) {
-            let index_of_bill  = this.bills.findIndex(bill => bill.id === bill_id),
-                selected_bill  = this.bills[index_of_bill],
-                index_of_order = selected_bill.orders.findIndex(order => order.id === order_id),
-                selected_order = selected_bill.orders[index_of_order],
-                index_of_color = selected_order.colors.findIndex(color => color.id === color_id),
-                selected_color = selected_order.colors[index_of_color],
-                index_of_size  = selected_color.sizes.findIndex(size => size.id === size_id),
-                selected_size  = selected_color.sizes[index_of_size];
-            selected_size.count ? '' : selected_size.count = 0; // set min value = 0
-            
-            // clear size if val = 0
-            if (selected_size.count == 0) {
-                selected_color.sizes.splice(index_of_size, 1);
-                this.deleted_items.sizes_IDs.push(selected_size.id);
-            }; // end of if condition
-            
-            // clear color if it had no sizes
-            if (selected_color.sizes.length === 0) {
-                selected_order.colors.splice(index_of_color, 1);
-                this.deleted_items.colors_IDs.push(selected_color.id);
-            } //end of if condition
-            
-        }, //end of compute bill changes
-
-        delete_bill_color: function (bill_id, order_id, color_id) {
-            if (!this.no_connection) {
-                let selected_bill_index  = this.bills.findIndex(bill => bill.id === bill_id),
-                    selected_bill        = this.bills[selected_bill_index],
-                    selected_order_index = selected_bill.orders.findIndex(order => order.id === order_id),
-                    selected_order       = selected_bill.orders[selected_order_index],
-                    selected_color_index = selected_order.colors.findIndex(color => color.id === color_id);
-
-                selected_order.colors.splice(selected_color_index, 1);
-                this.deleted_items.colors_IDs.push(color_id);
-            }
-        }, // End of delete color
-
-        add_size: function (bill_id, order_id, color_id, size) {
-            if (!this.no_connection) {
-                let selected_bill_index  = this.bills.findIndex(bill => bill.id === bill_id),
-                    selected_bill        = this.bills[selected_bill_index],
-                    selected_order_index = selected_bill.orders.findIndex(order => order.id === order_id),
-                    selected_order       = selected_bill.orders[selected_order_index],
-                    selected_color_index = selected_order.colors.findIndex(color => color.id === color_id),
-                    selected_color       = selected_order.colors[selected_color_index];
-
-                selected_color.sizes.push({
-                    id: Math.random() * 999999,
-                    size,
-                    count: 0,
-                    color_id: selected_color.id,
-                    order_id: selected_order.id,
-                    bill_id: selected_bill.id,
-                });
-            }
-        }, //end of add size
-    }, //end of methods
-
     watch: {
-        bills: {
-            handler: function (new_bills, old_bills) {
-                if (!this.no_connection) {
-                    new_bills.forEach( (bill, bill_index) => {
-                        let total_bill_price = 0;
-                        bill.orders.forEach( (order, index) => {
-                            total_bill_price += parseInt(order.total_price);
-                            order.total_price = parseInt(order.piece_price) * parseInt(order.count); //calculate total order price
-                            // calculate total order count
-                            let total_count = 0;
-                            order.colors.forEach(color => total_count += parseInt(color.count));
-                            order.count = total_count;
-
-                            // delete empty order
-                            if (order.colors.length === 0) {
-                                bill.orders.splice(index, 1);
-                                this.deleted_items.orders_IDs.push(order.id);
-                            } //end of if condition
-
-                        });
-                        bill.total_price = total_bill_price; //calculate total bill price
-
-                        //delete empty bill
-                        if (bill.orders.length === 0) {
-                            this.bills.splice(bill_index, 1);
-                            this.deleted_items.bills_IDs.push(bill.id);
-                        } //end of if condition
-                    });
-                    new_bills.length === 0 ? this.close_bills() : ''; //Close bills window if all bills deleted.
-
-                    //send changes to server
-                    axios.post(this.url + '/bills/watch-changes', {
-                        deleted_items: this.deleted_items,
-                        bills: this.bills,
-                    })
-                    .then(response => {
-                        if (response.data.new_size_created) {
-                            let new_size = response.data.new_size_created;
-                            let selected_bill_index  = this.bills.findIndex(bill => bill.id === new_size.bill_id),
-                                selected_bill        = this.bills[selected_bill_index],
-                                selected_order_index = selected_bill.orders.findIndex(order => order.id === new_size.order_id),
-                                selected_order       = selected_bill.orders[selected_order_index],
-                                selected_color_index = selected_order.colors.findIndex(color => color.id === new_size.color_id),
-                                selected_color       = selected_order.colors[selected_color_index],
-                                selected_size_index  = selected_color.sizes.findIndex(size => size.id === response.data.old_id),
-                                selected_size        = selected_color.sizes[selected_size_index];
-                            selected_size.id = new_size.id;
-                        } //end of if.
-                    })
-                    .catch(err => console.log(err));
-                } // end of if condition
-            },
-
-            deep: true,
-        },
-        no_connection: function (value) {
-            value ? this.show_connection_status = true : '';
-            if (!value) {
-                hide_connection_status ? console.log(hide_connection_status) : console.log('hide_connection_status not defined');
-                let hide_connection_status = setTimeout(() => this.show_connection_status = false, 5000);
-            }
-        },
-    },
+        loaded_items: function (val) {
+            if (val.length === 21)
+                this.all_items_loaded = true;
+        }, //end of loaded items
+    }, //end of watch
 
     mounted() {
 
-        //get data from server
+        //get bills from server
         axios.get(this.url + '/bills/get-all')
         .then(response => {
             this.is_loading = false;
-            this.bills = response.data;
-
+            this.bills = response.data.reverse();
+            this.loaded_items.push('bills');
         })
         .catch(err => {
             this.is_loading = false;
             this.bill_loading_error = true;
         });
 
-        Chart.defaults.global.defaultFontSize = 13;
-        var ctx = document.getElementById('myChart');
-        var myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Today', 'Yesterday', 'The day before'],
-                datasets: [{
-                    data: [this.today_mony, this.yesterday_mony, this.the_day_before],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                    ],
-                    borderWidth: 0,
-                }]
-            },
-            options: {
-                responsive: true,
-                responsiveAnimationDuration: 1000,
-                title: {
-                    display: true,
-                    text: 'Daily earnings',
-                    fontColor: '#888'
-                },
-                legend: {
-                    display: false,
-                }
-            }
-        });
+        /* Daily section */
+        //get today earnings
+        let date        = new Date(),
+            current_day = `${date.getFullYear()}-${(date.getMonth() + 1).toString().length < 2 ? '0' + (date.getMonth() + 1).toString() : date.getMonth() + 1}-${date.getDate().toString().length < 2 ? '0' + date.getDate().toString() : date.getDate()}`;
+        axios.post(`${this.url}/bills/day-earning`, {day: current_day})
+        .then(response => {
+            this.today_mony = response.data;
+            this.loaded_items.push('today_mony');
+        })
+        .catch(error => window.location.reload());
 
-        var secondCtx = document.getElementById('secondChart');
-        var myChart = new Chart(secondCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['This year', 'Last year', 'The year before'],
-                datasets: [
-                    {
-                        data: [this.this_year, this.last_year, this.the_year_before],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                        ],
-                        borderWidth: 0,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                responsiveAnimationDuration: 1000,
-                title: {
-                    display: true,
-                    text: 'Yearly earnings',
-                    fontColor: '#888'
-                },
-                legend: {
-                    display: false,
-                }
-            }
-        });
+        //get yesterday earnings
+        let yesterday_date        = new Date(date.getTime() - (1 * 24 * 60 * 60 * 1000)),
+            yesterday_date_format = `${yesterday_date.getFullYear()}-${(yesterday_date.getMonth() + 1).toString().length < 2 ? '0' + (yesterday_date.getMonth() + 1).toString() : yesterday_date.getMonth() + 1}-${yesterday_date.getDate().toString().length < 2 ? '0' + yesterday_date.getDate().toString() : yesterday_date.getDate()}`;
+        axios.post(`${this.url}/bills/day-earning`, {day: yesterday_date_format})
+        .then(response => {
+            this.yesterday_mony = response.data;
+            this.loaded_items.push('yesterday_mony');
+        })
+        .catch(error => console.log(error));
 
-        var monthSales = document.querySelector('#month-sales').getContext('2d');
-        var monthChart = new Chart(monthSales, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [
-                    {
-                        data: [10,20,100,30,90,50,40,120,70,110,200,120],
-                        backgroundColor: '#3ab3f1',
-                        borderColor: '#000',
-                        borderWidth: 1,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                responsiveAnimationDuration: 1000,
-                legend: {display: false},
-                title: {
-                    display: true,
-                    text: 'This year earnings'
-                }
-            },
-        });
+        //get the day before earnings
+        let the_day_before_date        = new Date(date.getTime() - (2 * 24 * 60 * 60 * 1000)),
+            the_day_before_date_format = `${the_day_before_date.getFullYear()}-${(the_day_before_date.getMonth() + 1).toString().length < 2 ? '0' + (the_day_before_date.getMonth() + 1).toString() : the_day_before_date.getMonth() + 1}-${the_day_before_date.getDate().toString().length < 2 ? '0' + the_day_before_date.getDate().toString() : the_day_before_date.getDate()}`;
+        axios.post(`${this.url}/bills/day-earning`, {day: the_day_before_date_format})
+        .then(response => {
+            this.the_day_before = response.data;
+            this.loaded_items.push('the_day_before');
+        })
+        .catch(error => console.log(error));
+        /* End of daily section */
 
-        // Set dimentions of elements
-        function set_elements_sizes() {
-            let window_height       = $('.sells').innerHeight(),
-                statistics_height   = $('.statistics').innerHeight();
-            if (window_height >= statistics_height)
-            {
-                $('.bills-container, .trend-product-container').innerHeight(window_height - statistics_height - 60);
-            }
-        }
+        /* monthly section */
+        //get all months in current year
+        let current_year = new Date().getFullYear();
+        let get_all_year_earnings = async () => {
+            for(let month=1; month<=12; month++) {
+            await axios.post(`${this.url}/bills/month-earnings`, {month: `${current_year}-${month}`})
+            .then(res => {
+                switch (month) {
+                    case 1:
+                        this.months_earnings.jan = res.data;
+                        break;
+                    
+                    case 2:
+                        this.months_earnings.feb = res.data;
+                        break;
 
-        set_elements_sizes();
+                    case 3:
+                        this.months_earnings.mar = res.data;
+                        break;
 
-        //create beautiful numbers counter
-        let today_mony = this.today_mony;
-        this.today_mony = 0;
-        let counter = setInterval(() => {
-            if (today_mony >= 1000 && today_mony % 10 === 0)
-                this.today_mony += 10;
-            else if (today_mony !== 0)
-                this.today_mony += 1;
-            if (this.today_mony >= today_mony)
-                clearInterval(counter);
-            }, 1);
-        let yesterday_mony = this.yesterday_mony;
-        this.yesterday_mony = 0;
-        let yesterday_counter = setInterval(() => {
-                if (yesterday_mony >= 1000 && yesterday_mony % 10 === 0)
-                    this.yesterday_mony += 10;
-                else if (yesterday_mony !== 0)
-                    this.yesterday_mony += 1;
-                if (this.yesterday_mony >= yesterday_mony)
-                    clearInterval(yesterday_counter);
-            }, 1);
+                    case 4:
+                        this.months_earnings.apr = res.data;
+                        break;
 
+                    case 5:
+                        this.months_earnings.may = res.data;
+                        break;
+
+                    case 6:
+                        this.months_earnings.jun = res.data;
+                        break;
+
+                    case 7:
+                        this.months_earnings.jul = res.data;
+                        break;
+
+                    case 8:
+                        this.months_earnings.aug = res.data;
+                        break;
+
+                    case 9:
+                        this.months_earnings.sep = res.data;
+                        break;
+
+                    case 10:
+                        this.months_earnings.oct = res.data;
+                        break;
+
+                    case 11:
+                        this.months_earnings.nov = res.data;
+                        break;
+
+                    case 12:
+                        this.months_earnings.dec = res.data;
+                        break;
+                
+                    default:
+                        console.error('Error in months axios response month: ' + month);
+                        break;
+                }//end of switch
+                this.loaded_items.push(`month_${month}`);
+            })//end of axios.then
+            .catch(err => console.log('error in month ' + month));//end of axios
+        }//end of for
+        };// end of get_all_year_earnings function
+        get_all_year_earnings();
+        /* end monthly section */
+
+        /* Yearly section */
+        //get this year earnings
+        axios.post(`${this.url}/bills/year-earnings`, {year: new Date().getFullYear()})
+        .then(res => {
+            this.this_year = res.data;
+            this.loaded_items.push('this_yaer');
+        })
+        .catch(err => console.log(err));
+        
+        //Get last year earnings
+        axios.post(`${this.url}/bills/year-earnings`, {year: new Date().getFullYear() - 1})
+        .then(response => {
+            this.last_year = response.data;
+            this.loaded_items.push('last_year');
+        })
+        .catch(error => console.log(error));
+
+        //Get the year before earnings
+        axios.post(`${this.url}/bills/year-earnings`, {year: new Date().getFullYear() - 2})
+        .then(response => {
+            this.the_year_before = response.data;
+            this.loaded_items.push('the_year_before');
+        })
+        .catch(error => console.log(error));
+
+        /* End yearly section */
+
+        // Get special members
+        axios.post(`${this.url}/bills/special-customers`, {wanted: 'members'})
+        .then(response => {
+            this.special_members = response.data;
+            this.loaded_items.push('special_members');
+        })
+        .catch(err => console.log(err));
+
+        // Get special clients
+        axios.post(`${this.url}/bills/special-customers`, {wanted: 'clients'})
+        .then(response => {
+            this.special_clients = response.data;
+            this.loaded_items.push('special_clients');
+        })
+        .catch(error => console.log(error));
 
     },
 
     components: {
-        Bills,
+        SalesInterface,
     },
 }
 </script>

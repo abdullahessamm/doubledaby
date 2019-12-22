@@ -439,4 +439,33 @@ class UserController extends Controller
         
     }
 
+    /* Admins Control section */
+    //Get admins data
+    function get_admins(Request $request)
+    {
+        if ($request->ajax() && auth()->user()->level === 'admin')
+        {
+            $admins = User::where('level', 'admin')->get();
+            //this is for test
+            $new_admins = [];
+            foreach ($admins as $admin):
+                $admin['photo_link'] = 'https://scontent-hbe1-1.xx.fbcdn.net/v/t1.0-9/s960x960/67747163_2563554200344857_4445584510511218688_o.jpg?_nc_cat=103&_nc_ohc=vq7f33st4VwAQlHEWEI20K2vchP_G4XYrWdi9y4iaBcRLVGaj9_xvfK3g&_nc_ht=scontent-hbe1-1.xx&oh=2521114c16f499da8f1777a33f947316&oe=5E76B840';
+                array_push($new_admins, $admin);
+            endforeach;
+            //end test
+            return $new_admins;
+        } //End of if
+    } //End of get admins
+    //Remove an admin by id
+    function delete_admin(Request $request)
+    {
+        if ($request->ajax() && auth()->user()->level === 'admin')
+        {
+            if (is_numeric($request->id))
+            {
+                User::where('id', $request->id)->delete();
+            } //End of if
+        } //End of if
+    } //End of delete admin
+
 }

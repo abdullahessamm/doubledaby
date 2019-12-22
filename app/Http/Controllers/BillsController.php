@@ -118,4 +118,79 @@ class BillsController extends Controller
             endforeach;
         endif;
     }
+    // calculate the requested day earnings
+    public function calc_day_earning(Request $request)
+    {
+        if ($request->ajax() && auth()->user()->level == 'admin'):
+            $all_bills    = bill::get();
+            $day_earnings = 0;
+            foreach ($all_bills as $bill):
+                if (date('Y-m-d', strtotime($bill->created_at) + (2*60*60)) === $request->day):
+                    $day_earnings += $bill->total_price;
+                endif;
+            endforeach;
+            return $day_earnings;
+        endif;
+    }
+
+    //Calculate the requested month earnings
+    public function calc_month_earnings(Request $request)
+    {
+        if ($request->ajax() && auth()->user()->level === 'admin'):
+            $all_bills = bill::get();
+            $month_earnings = 0;
+            foreach ($all_bills as $bill):
+                if (date('Y-m', strtotime($bill->created_at)) == $request->month)
+                {
+                    $month_earnings += $bill->total_price;
+                }
+            endforeach;
+            return $month_earnings;
+        endif;
+        
+    }
+
+    //calculate the requested year earnings
+    public function calc_year_earnings(Request $request)
+    {
+        if ($request->ajax() && auth()->user()->level === 'admin'):
+            $all_bills = bill::get();
+            $year_earnings = 0;
+            foreach ($all_bills as $bill):
+                date('Y', strtotime($bill->created_at)) == $request->year ? $year_earnings += $bill->total_price : '';
+            endforeach;
+            return $year_earnings;
+        endif;
+    }
+
+    //Find The best customers from bills
+    public function special_customers(Request $request)
+    {
+        if ($request->ajax() && auth()->user()->level === 'admin'):
+            $all_bills = $request->wanted === 'members' ? bill::where('is_member', '1')->get() : bill::where('is_member', '0')->get();
+            $clients = [];
+            foreach ($all_bills as $bill):
+                $total_payments = 0;
+                $client_found = false;
+                foreach ($clients as $index => $client):
+                    if ($client['name'] === $bill->customer_name):
+                        $total_payments = $client['total_payments'] + $bill->total_price;
+                        $clients[$index]['total_payments'] = $total_payments;
+                        $client_found = true;
+                    endif;
+                endforeach;
+                if (!$client_found) {
+                    array_push($clients, [
+                        "name"              => $bill->customer_name,
+                        "total_payments"    => $bill->total_price
+                    ]);
+                }//end of if
+            endforeach;
+            arsort($clients);
+            //get top 4 clients
+            $top_4_clients = [];
+            count($clients) <= 4 ? $top_4_clients = $clients : $top_4_clients = array_slice($clients, 0, 4);
+            return $top_4_clients;
+        endif;
+    }
 }

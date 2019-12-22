@@ -3,7 +3,7 @@
         <Routes :username="user.full_name" :userID="user.id"></Routes>
         <div class="dashboard-settings">
             <Navbar :username="user.full_name" :userID="user.id"></Navbar>
-            <router-view :token="token" :url="url" :no_connection="no_connection"></router-view>
+            <router-view :token="token" :url="url" :no_connection="no_connection" :userID="user.id"></router-view>
         </div>
     </div>
 </template>
@@ -51,7 +51,10 @@
             let check_the_connection = () => {
                 check_connection = setInterval(() => {
                     axios.post(this.url + '/check-connection')
-                    .then(response => this.no_connection = false)
+                    .then(response => {
+                        this.no_connection = false;
+                        $('input').removeAttr('disabled');
+                    })
                     .catch(err => {
                         this.no_connection = true;
                         $('input').attr('disabled', 'disabled');

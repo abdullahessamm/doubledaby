@@ -140,6 +140,10 @@ Route::post('check-connection', function () {
     return request();
 });
 
+//users and admins routes
+Route::get('users/get-admins', 'UserController@get_admins')->middleware('admin');
+Route::post('users/delete-admin', 'UserController@delete_admin')->middleware('admin');
+
 //products routes
 Route::get('get-product-by-id/{id?}', 'DashboardController@get_product_by_id');
 
@@ -154,10 +158,13 @@ Route::post('delete-product', 'DashboardController@delete_product')->middleware(
 //bills routes
 Route::get('bills/get-all', 'BillsController@get_all_bills')->middleware('admin');
 Route::post('bills/watch-changes', 'BillsController@watch_changes')->middleware('admin');
+Route::post('bills/day-earning', 'BillsController@calc_day_earning')->middleware('admin');
+Route::post('bills/month-earnings', 'BillsController@calc_month_earnings')->middleware('admin');
+Route::post('bills/year-earnings', 'BillsController@calc_year_earnings')->middleware('admin');
+Route::post('bills/special-customers', 'BillsController@special_customers')->middleware('admin');
 
 //Dashboard view
 Route::view('dashboard/{param?}', 'vue.dashboard')->middleware('admin');
-
 
 
 //Testing Route
